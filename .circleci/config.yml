@@ -4,7 +4,10 @@ version: 2.1
 workflows:
   build_and_release:
     jobs:
-      - build
+      - build:
+          filters:
+            tags:
+              only: /^v.*/
       - release:
           requires:
             - build
@@ -37,6 +40,9 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - run:
+          name: Install ghr
+          command: go install github.com/tcnksm/ghr@v0.13.0
       - run:
           name: Release << pipeline.git.tag >>
           command: ./release.sh << pipeline.git.tag >>

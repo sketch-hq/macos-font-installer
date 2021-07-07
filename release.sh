@@ -18,4 +18,4 @@ CHANGELOG=$(git log --pretty='format:- %h: %s' ${DIFF})
 ghr -u ${GITHUB_ORG} -r ${GITHUB_REPO} \
 -n "Version ${VERSION}" \
 -b "${CHANGELOG}" \
--c ${SHA1} ${TAG} ./macos-font-installer
+-c ${SHA1} ${TAG} ./bin/macos-font-installer
