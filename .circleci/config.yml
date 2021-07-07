@@ -1,0 +1,42 @@
+version: 2.1
+
+
+workflows:
+  build_and_release:
+    jobs:
+      - build
+      - release:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+
+jobs:
+  build:
+    macos:
+      xcode: 12.5.0 # MacOS 11.4.0
+    steps:
+    - checkout
+    - run:
+          name: Create Universal Binary
+          command: ./compile.sh
+    - persist_to_workspace:
+          root: .
+          paths:
+            - bin
+    - store_artifacts:
+        path: bin/macos-font-installer
+
+  release:
+    docker:
+      - image: cimg/go:1.16
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Release << pipeline.git.tag >>
+          command: ./release.sh << pipeline.git.tag >>
